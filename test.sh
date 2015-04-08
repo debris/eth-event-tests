@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-export abi="/Users/marekkotewicz/ethereum/cpp-ethereum/build/abi/Debug/abi"
 RPCPORT=8545
 RED='\x1b[0;31m'
 GREEN='\x1b[0;32m'
