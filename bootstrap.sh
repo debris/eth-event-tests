@@ -2,37 +2,56 @@
 
 export solc="/Users/marekkotewicz/ethereum/cpp-ethereum/build/solc/Debug/solc"
 RPCPORT=8545
+RED='\x1b[0;31m'
+GREEN='\x1b[0;32m'
+NO_COLOR='\x1b[0m'
+
+function help()
+{
+    echo "./bootstrap.sh <file> <contract_name>"
+}
+
+if [[ ${1} == "--help" ]]; then
+    help; exit 0
+fi
+
+if [ ! ${1} ];then 
+    echo "you have to specify test contract location!"; help; exit 1
+fi
+
+if [ ! ${2} ];then
+    echo "you have to specify test contract name!"; help; exit 1
+fi
+
+LOCATION=${1}
+NAME=${2}
 
 echo "getting coinbase..."
 COINBASE=`curl -s -X POST --data '{"jsonrpc": "2.0","method": "eth_coinbase", "params": [],"id": 1}' http://localhost:${RPCPORT} | grep result | cut -d : -f 2 | cut -d '"' -f 2`
-echo "coinbase: ${COINBASE}"
+echo -e "coinbase: ${GREEN}${COINBASE}${NO_COLOR}"
 
 echo "preparing tmp directory..."
-rm -rf tmp && mkdir tmp && cd $_
+rm -rf tmp && mkdir tmp
 
-echo "creating Test0 contract..."
-echo 'contract Test0 {
-    event Hello();
+echo "loading test contract: ${LOCATION}"
+cat ${LOCATION} > "tmp/contract.sol"
 
-    function hello() {
-        Hello();
-    }
-}' > Test0.sol
-
+echo "entering tmp directory..."
+cd tmp
 
 echo "creating binary and abi files..."
-solc --input-file Test0.sol --json-abi file --binary file --add-std 0
+solc --input-file contract.sol --json-abi file --binary file --add-std 0
 
-TEST0_BINARY=`cat Test0.binary`
-echo "test0 binary: ${TEST0_BINARY}"
+CONTRACT_BINARY=`cat ${NAME}.binary`
+echo "test0 binary: ${CONTRACT_BINARY}"
 
-TX="{\"jsonrpc\": \"2.0\",\"method\": \"eth_sendTransaction\", \"params\": [{\"from\": \"${COINBASE}\", \"data\": \"${TEST0_BINARY}\"}],\"id\": 1}"
+TX="{\"jsonrpc\": \"2.0\",\"method\": \"eth_sendTransaction\", \"params\": [{\"from\": \"${COINBASE}\", \"data\": \"${CONTRACT_BINARY}\"}],\"id\": 1}"
 echo "${TX}"
 ADDRESS=`curl -s -X POST --data "${TX}" http://localhost:${RPCPORT} | grep result | cut -d : -f 2 | cut -d '"' -f 2`
-echo "created contract at: ${ADDRESS}"
+echo -e "created contract at: ${GREEN}${ADDRESS}${NO_COLOR}"
 
 echo "Writing csv file!"
 echo "Test0,${ADDRESS}" > contracts.csv
 echo "Finished!"
-echo "Now you should mine transactions!"
+echo -e "${RED}Now you should mine transactions!${NO_COLOR}"
 
