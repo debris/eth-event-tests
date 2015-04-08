@@ -8,7 +8,7 @@ eth-event-test can be used to bootstrap contracts to ethereum network and check 
 - bash (with cl tools: curl, grep, cut, awk)
 
 ### usage:
-- put solc in your path (or export it: `export solc=/your_path_to_solc/solc`)
+- put solc in your path (or export it: ```bash export solc=/your_path_to_solc/solc```)
 - start go-ethereum with jsonrpc server on port 8545, some money in coinbase and unlocked account
 
 ### boostrap contract
