@@ -34,4 +34,5 @@ echo "created contract at: ${ADDRESS}"
 echo "Writing csv file!"
 echo "Test0,${ADDRESS}" > contracts.csv
 echo "Finished!"
+echo "Now you should mine transactions!"
 
