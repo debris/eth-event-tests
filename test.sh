@@ -28,3 +28,26 @@ TX="{\"jsonrpc\": \"2.0\",\"method\": \"eth_sendTransaction\", \"params\": [{\"f
 RESULT=`curl -s -X POST --data "${TX}" http://localhost:${RPCPORT} | grep result | cut -d : -f 2 | cut -d '"' -f 2`
 echo -e "received result ${GREEN}${RESULT}${NO_COLOR}"
 
+
+echo "getting filter logs..."
+# filtering address not working!
+#GET_LOGS_PAYLOAD="{\"jsonrpc\": \"2.0\",\"method\": \"eth_getLogs\", \"params\": [{\"address\": \"${CONTRACT_ADDRESS}\"}],\"id\": 1}"
+#GET_LOGS_PAYLOAD="{\"jsonrpc\": \"2.0\",\"method\": \"eth_getLogs\", \"params\": [{\"address\": \"0x3b97ecd0eddbc62e9927719a753a3b9e74e8a3ef\"}],\"id\": 1}"
+#GET_LOGS_PAYLOAD="{\"jsonrpc\": \"2.0\",\"method\": \"eth_getLogs\", \"params\": [{\"fromBlock\": \"0x0\", \"address\": \"${CONTRACT_ADDRESS}\"}],\"id\": 1}"
+#GET_LOGS_PAYLOAD="{\"jsonrpc\": \"2.0\",\"method\": \"eth_getLogs\", \"params\": [{\"fromBlock\": \"0x0\", \"address\": \"${CONTRACT_ADDRESS}\", \"topics\": [\"${EVENT}\"]}],\"id\": 1}"
+
+# working - returning one log, needs to be checked
+#GET_LOGS_PAYLOAD="{\"jsonrpc\": \"2.0\",\"method\": \"eth_getLogs\", \"params\": [{\"topics\": [\"${EVENT}\"]}],\"id\": 1}"
+
+# earliest not working, error invalid params!
+#GET_LOGS_PAYLOAD="{\"jsonrpc\": \"2.0\",\"method\": \"eth_getLogs\", \"params\": [{\"fromBlock\": \"earliest\", \"topics\": [\"${EVENT}\"]}],\"id\": 1}"
+
+# working - returning all logs!!!
+GET_LOGS_PAYLOAD="{\"jsonrpc\": \"2.0\",\"method\": \"eth_getLogs\", \"params\": [{\"fromBlock\": \"0x0\", \"topics\": [\"${EVENT}\"]}],\"id\": 1}"
+
+curl -s -X POST --data "${GET_LOGS_PAYLOAD}" http://localhost:${RPCPORT} 
+echo ""
+echo -e "${RED}expected result array to be not empty ${NO_COLOR}"
+#RESULT=`curl -s -X POST --data "${GET_LOGS_PAYLOAD}" http://localhost:${RPCPORT} | grep result | cut -d : -f 2 | cut -d '"' -f 2`
+
+
